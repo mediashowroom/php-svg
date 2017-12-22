@@ -1,11 +1,14 @@
 {
-    "name": "meyfa/php-svg",
-    "homepage": "https://github.com/meyfa/php-svg",
+    "name": "mediashowroom/php-svg",
+    "homepage": "https://github.com/mediashowroom/php-svg",
     "type": "library",
     "description": "Read, edit, write, and render SVG files with PHP",
     "keywords": ["svg"],
     "license": "MIT",
     "authors": [
+        {
+            "name": "René Pöpperl"
+        },
         {
             "name": "Fabian Meyer",
             "homepage": "http://meyfa.net"
