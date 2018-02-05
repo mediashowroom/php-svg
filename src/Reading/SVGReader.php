@@ -23,6 +23,8 @@ class SVGReader
         'g'         => 'SVG\Nodes\Structures\SVGGroup',
         'defs'      => 'SVG\Nodes\Structures\SVGDefs',
         'style'     => 'SVG\Nodes\Structures\SVGStyle',
+        'linearGradient' => 'SVG\Nodes\Structures\SVGLinearGradient',
+        'stop'      => 'SVG\Nodes\Data\SVGGradientStop',
         'rect'      => 'SVG\Nodes\Shapes\SVGRect',
         'circle'    => 'SVG\Nodes\Shapes\SVGCircle',
         'ellipse'   => 'SVG\Nodes\Shapes\SVGEllipse',
@@ -172,6 +174,10 @@ class SVGReader
     private function applyAttributes(SVGNode $node, \SimpleXMLElement $xml,
         array $namespaces)
     {
+        // Some arguments may not be in any namespace. So we add the 
+        // null-namespace to access these arguments.
+        $namespaces[] = null;
+        
         foreach ($namespaces as $ns) {
             foreach ($xml->attributes($ns, true) as $key => $value) {
                 if ($key === 'style') {
@@ -254,8 +260,11 @@ class SVGReader
 
         $call = array(self::$nodeTypes[$type], 'constructFromAttributes');
         $node = call_user_func($call, $xml);
+        
+
 
         $this->applyAttributes($node, $xml, $namespaces);
+
         $this->applyStyles($node, $xml);
 
         if ($node instanceof SVGNodeContainer) {

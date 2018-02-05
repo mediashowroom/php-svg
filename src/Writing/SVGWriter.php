@@ -3,6 +3,7 @@
 namespace SVG\Writing;
 
 use SVG\Nodes\Structures\SVGStyle;
+use SVG\Nodes\SVGContentAwareInterface;
 use SVG\Nodes\SVGNode;
 use SVG\Nodes\SVGNodeContainer;
 
@@ -49,12 +50,18 @@ class SVGWriter
         $this->appendAttributes($node->getSerializableAttributes());
         $this->appendStyles($node->getSerializableStyles());
 
-        if (!($node instanceof SVGNodeContainer) && !($node instanceof SVGStyle)) {
+        if (!($node instanceof SVGNodeContainer) && !($node instanceof SVGStyle)
+                && !($node instanceof SVGContentAwareInterface)) {
             $this->outString .= ' />';
             return;
         }
 
         $this->outString .= '>';
+        
+        if ($node instanceof SVGContentAwareInterface) {
+            $this->outString .= $node->getContent();
+        }
+        
         if ($node instanceof SVGStyle) {
             $this->writeCdata($node->getCss());
             $this->outString .= '</'.$node->getName().'>';
@@ -62,8 +69,10 @@ class SVGWriter
             return;
         }
 
-        for ($i = 0, $n = $node->countChildren(); $i < $n; ++$i) {
-            $this->writeNode($node->getChild($i));
+        if ($node instanceof SVGNodeContainer) {
+            for ($i = 0, $n = $node->countChildren(); $i < $n; ++$i) {
+                $this->writeNode($node->getChild($i));
+            }
         }
         $this->outString .= '</'.$node->getName().'>';
     }
